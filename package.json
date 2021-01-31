@@ -24,7 +24,9 @@
     "postinstall": "husky install",
     "prepublishOnly": "pinst --disable",
     "postpublish": "pinst --enable",
-    "prepack": "yarn compile",
+    "prepack": "yarn compile && oclif-dev manifest && oclif-dev readme",
+    "postpack": "rm -f oclif.manifest.json",
+    "version": "oclif-dev readme && git add README.md",
     "lint": "eslint . --ext .ts --config .eslintrc.js",
     "compile": "rm -rf lib && tsc -b "
   },
