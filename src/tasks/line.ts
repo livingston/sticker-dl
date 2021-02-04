@@ -2,8 +2,8 @@ import Listr from 'listr';
 import fse from 'fs-extra';
 import { green, bold, white, yellowBright } from 'colorette';
 
-import { BrowserAdapter } from '../lib/BrowserAdapter';
-import { downloadSticker } from '../lib/utils';
+import { BrowserAdapter } from '../BrowserAdapter';
+import { downloadSticker } from '../utils';
 
 import type { ListrContext, ListrTaskWrapper } from 'listr';
 

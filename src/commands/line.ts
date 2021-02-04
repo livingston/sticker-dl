@@ -1,6 +1,6 @@
 import { Command } from '@oclif/command';
 
-import { fetchLineStickers } from '../lib/line';
+import { fetchLineStickers } from '../tasks/line';
 
 export default class Line extends Command {
   static description = 'Download "line" stickers'
