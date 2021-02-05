@@ -1,3 +1,5 @@
+import path from 'path';
+
 import Listr from 'listr';
 import fse from 'fs-extra';
 import { green, bold, white, yellowBright } from 'colorette';
@@ -19,7 +21,7 @@ const StickerSourceConfig = {
   sourceURL: (id: string) => `https://store.line.me/stickershop/product/${id}/en`,
 }
 
-export const fetchLineStickers = async (stickerId: string) => {
+export const fetchLineStickers = async (stickerId: string, downloadDestination: string | undefined) => {
   const tasks = new Listr([
     {
       title: 'Sticker details',
@@ -48,7 +50,14 @@ export const fetchLineStickers = async (stickerId: string) => {
       task: async (ctx: ListrContext, task: ListrTaskWrapper) => {
         task.output = 'Downloading…';
 
-        const dest = `${StickerSourceConfig.destination}/${ctx.stickerTitle}`;
+        let exportPath = StickerSourceConfig.destination;
+
+        if (downloadDestination) {
+          const downloadPath = path.resolve(downloadDestination);
+          exportPath = downloadPath;
+        }
+
+        const dest = path.join(exportPath, ctx.stickerTitle);
         await fse.ensureDir(dest);
 
         const downloads = [];
