@@ -1,6 +1,6 @@
 # sticker-dl
 
-[![License](https://img.shields.io/github/license/livingston/sticker-dl)](./LICENSE)
+[![License](https://img.shields.io/github/license/livingston/sticker-dl)](https://github.com/livingston/sticker-dl/blob/main/LICENSE)
 [![npm](https://img.shields.io/npm/v/sticker-dl)](https://www.npmjs.com/package/sticker-dl)
 [![node-lts](https://img.shields.io/node/v-lts/sticker-dl)](https://www.npmjs.com/package/sticker-dl)
 
