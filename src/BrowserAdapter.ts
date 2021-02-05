@@ -1,19 +1,11 @@
-import puppeteer from 'puppeteer-extra';
-import StealthPlugin from 'puppeteer-extra-plugin-stealth';
-import AdblockerPlugin from 'puppeteer-extra-plugin-adblocker';
-
-import type { Browser, Page } from 'puppeteer';
+import fetch from 'node-fetch';
+import * as cheerio from 'cheerio';
 
 const DEBUG = process.env.DEBUG;
 
-// eslint-disable-next-line new-cap
-puppeteer.use(StealthPlugin());
-// eslint-disable-next-line new-cap
-puppeteer.use(AdblockerPlugin({ blockTrackers: true }));
-
 interface StickerSourceConfig {
     filenameRegEx: RegExp;
-    desitnation: string;
+    destination: string;
 
     sourceURL(id: string): string;
 }
@@ -21,32 +13,24 @@ interface StickerSourceConfig {
 export class BrowserAdapter {
   config: StickerSourceConfig;
 
-  browser!: Browser;
-
-  page!: Page;
+  $!: cheerio.Root;
 
   constructor(config: StickerSourceConfig) {
     this.config = config;
-  }
-
-  async launch() {
-    this.browser = await puppeteer.launch();
-    this.page = await this.browser.newPage();
   }
 
   async navigate(param: string) {
     const url = this.config.sourceURL(param);
 
     try {
-      await this.page.goto(url);
+      const response = await fetch(url);
+      const body = await response.text();
+
+      this.$ = cheerio.load(body);
     } catch (error) {
       if (DEBUG) console.error(error);
 
       throw new Error(`Navigation to ${url} failed`);
     }
-  }
-
-  async close() {
-    await this.browser.close();
   }
 }

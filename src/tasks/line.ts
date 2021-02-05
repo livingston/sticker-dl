@@ -14,7 +14,7 @@ const Selectors = {
 
 const StickerSourceConfig = {
   filenameRegEx: /sticker\/(\d+)\/(iPhone|android)/,
-  desitnation: './downloads',
+  destination: './downloads',
 
   sourceURL: (id: string) => `https://store.line.me/stickershop/product/${id}/en`,
 }
@@ -27,24 +27,20 @@ export const fetchLineStickers = async (stickerId: string) => {
         task.output = 'Loading page…';
 
         const browser = new BrowserAdapter(StickerSourceConfig);
-
-        await browser.launch();
         await browser.navigate(stickerId);
 
-        ctx.stickerTitle = await browser.page.$eval(Selectors.StickerTitle, node => node.textContent);
+        ctx.stickerTitle = browser.$(Selectors.StickerTitle).text();
 
-        ctx.stickerList = await browser.page.$$eval(Selectors.StickerItem, nodes => nodes.map(node => {
-          const data = JSON.parse(node.getAttribute('data-preview') ?? '');
+        ctx.stickerList = browser.$(Selectors.StickerItem).map((i, el) => {
+          const data = browser.$(el).data('preview');
 
           if (data.type === 'animation') return data.animationUrl;
           if (data.type === 'popup') return data.popupUrl;
 
           return data.staticUrl;
-        }));
+        }).get();
 
         task.output = `Found ${ctx.stickerList.length} stickers`;
-
-        await browser.close();
       },
     },
     {
@@ -52,7 +48,7 @@ export const fetchLineStickers = async (stickerId: string) => {
       task: async (ctx: ListrContext, task: ListrTaskWrapper) => {
         task.output = 'Downloading…';
 
-        const dest = `${StickerSourceConfig.desitnation}/${ctx.stickerTitle}`;
+        const dest = `${StickerSourceConfig.destination}/${ctx.stickerTitle}`;
         await fse.ensureDir(dest);
 
         const downloads = [];
